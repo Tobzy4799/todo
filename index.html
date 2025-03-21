@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://kit.fontawesome.com/7e5d059854.js" crossorigin="anonymous"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .div1 {
+            border: none;
+            box-shadow: 2px 2px 2px 2px;
+            border-radius: 10px;
+            width: 610px;
+            margin: auto;
+            margin-top: 40px;
+            background-color: bisque;
+
+        }
+
+        h1 {
+            text-decoration: underline;
+            font-family: Arial, Helvetica, sans-serif;
+            color: teal;
+            width: 620px;
+            text-align: center;
+        }
+
+        .div2 {
+
+            width: 610px;
+            height: 150px;
+            background-image: url('./media/Screenshot\ 2025-02-26\ 171127.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-size: 605px 150px;
+            background-color: white;
+        }
+
+        input {
+            width: 600px;
+            height: 35px;
+            border-color: green;
+            box-shadow: 2px 2px 2px 2px;
+            text-align: center;
+            margin-left: 4px;
+            border: none;
+            border-radius: 10px;
+        }
+
+        .btn1,
+        .btn2,
+        .btn3,
+        .btn4,
+        .btn5 {
+            margin-top: 10px;
+            width: 113px;
+            height: 30px;
+            border-radius: 10px;
+            border: none;
+            margin-left: 5px;
+
+        }
+
+        .btn1 {
+            background-color: green;
+            color: white;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        }
+
+        .btn2,
+        .btn3 {
+            background-color: red;
+            color: white;
+        }
+
+        .btn4 {
+            background-color: blue;
+            color: white;
+        }
+
+        .btn5 {
+            background-color: orange;
+            color: white;
+        }
+
+        .div3 {
+            width: 605px;
+            margin-left: 2px;
+            box-shadow: 1px 1px 1px 1px;
+            border-radius: 3px;
+            font-size: 20px;
+            margin-top: 10px;
+            display: flex;
+        }
+
+        .btn6,
+        .btn7 {
+            width: 60px;
+            height: 30px;
+            border-radius: 10px;
+            border: none;
+        }
+
+        .btn6 {
+            background-color: green;
+            color: white;
+        }
+
+        .btn7 {
+            background-color: red;
+            color: white;
+            margin-left: 2px;
+        }
+
+        .div4 {
+            width: 411px;
+        }
+    </style>
+</head>
+
+<body onload="getTodo()">
+    <div class="div1">
+        <h1>CREATE YOUR TODO LIST</h1>
+        <div class="div2"></div><br>
+        <input type="text" id="inp" placeholder="input a todo"><br>
+        <button class="btn1" onclick="submit()">submit</button>
+        <button class="btn2" onclick="deleteFirst()">delete first item</button>
+        <button class="btn3" onclick="deleteLast()">delete last item</button>
+        <button class="btn4" onclick="reversed()">reverse list</button>
+        <button class="btn5" onclick="cleared()">clear list</button><br>
+        <div id="myScreen"></div>
+    </div>
+
+    <script>
+        arr = []
+        function submit() {
+            let todo = inp.value
+            let todoObj = {
+                todoInp: todo,
+                status: false,
+            }
+
+
+            if (todo == '') {
+                console.log('no sir');
+            } else {
+                arr.push(todoObj)
+                storeTodo()
+                display()
+                inp.value = ''
+            }
+        }
+
+        function storeTodo() {
+
+            let stringTodo = JSON.stringify(arr)
+            localStorage.setItem('todoBefore', stringTodo)
+        }
+
+        function getTodo() {
+            let storedTodo = localStorage.getItem('todoBefore')
+            if (storedTodo == null) {
+                console.log('nothing in local storage')
+            } else {
+                arr = JSON.parse(storedTodo)
+                display()
+            }
+        }
+        function display() {
+            myScreen.innerHTML = ''
+            for (let i = 0; i < arr.length; i++) {
+                myScreen.innerHTML += `<div class="div3">
+                    <div class="div4"><i class="fa-solid fa-check"></i> ${arr[i].todoInp}</div>
+                    <div class="div5"> <button class="btn6" onclick="editTodo(${i})">edit</button>
+                <button class="btn7" onclick="deleteTodo(${i})">delete</button>
+                <button id="btn8${i}" style="background-color: red; color: white; border-radius: 10px; border: none; width: 60px; height:30px;" onclick="setStatus(${i})">not done</button></div>
+               </div>`
+
+            }
+        }
+        function deleteFirst() {
+            if (arr.length == '') {
+                alert('nothing to delete')
+            } else {
+                arr.shift()
+                storeTodo()
+                display()
+            }
+        }
+        function deleteLast() {
+            if (arr.length == '') {
+                alert('nothing to delete')
+            } else {
+                arr.pop()
+                storeTodo()
+                display()
+            }
+        }
+        function reversed() {
+            if (arr.length == '') {
+                alert('nothing to reverse')
+            } else {
+                arr.reverse()
+                storeTodo()
+                display()
+            }
+        }
+        function cleared() {
+            if (arr.length == '') {
+                alert('nothing to clear')
+            } else {
+                arr = []
+                storeTodo()
+                display()
+            }
+        }
+        function deleteTodo(i) {
+            if (confirm('Are you sure you want to delete') == true) {
+                arr.splice(i, 1)
+                storeTodo()
+                display()
+            } else {
+                display()
+            }
+        }
+        function editTodo(i) {
+            let newItem = prompt('input your new todo  here', arr[i].todoInp)
+
+            if (newItem !== null) {
+                arr[i].todoInp = newItem
+                storeTodo()
+                display()
+            } else {
+                display()
+            }
+        }
+        function setStatus(i) {
+            let btn = document.getElementById(`btn8${i}`)
+            // arr[i].status == false? arr[i].status = true : arr[i].status = false
+
+            if (arr[i].status == false) {
+                btn.innerHTML = 'not done'
+                btn.style.backgroundColor = 'red'
+                arr[i].status = true
+            } else {
+                btn.innerHTML = 'done'
+                btn.style.backgroundColor = 'green'
+                arr[i].status = false
+            }
+
+        }
+
+
+
+    </script>
+</body>
+
+</html>
